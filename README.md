@@ -31,6 +31,7 @@ The only thing you need to do is passing children. These children **must** have 
 
 - `style` *(optional)*: `Object` the container element style
 - `childStyle` *(optional)*: `Object` the element wrapping each child style
+- `springConfig` *(optional)* `Object` spring configuration for react-motion ([docs](https://github.com/chenglou/react-motion#--spring-val-number-config-springhelperconfig--opaqueconfig))
 
 #### example
 
