@@ -1,0 +1,10 @@
+[ignore]
+.*/node_modules
+
+[include]
+
+[libs]
+interfaces
+
+[options]
+module.name_mapper.extension= 'html' -> 'string'
