@@ -6,7 +6,8 @@
   "scripts": {
     "start": "rm -fr lib/ && babel src --out-dir lib --ignore='__tests__'",
     "examples": "node scripts/examples.js",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "publish": "npm test && npm start"
   },
   "repository": {
     "type": "git",
