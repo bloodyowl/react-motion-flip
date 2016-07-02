@@ -183,7 +183,7 @@ const mergeChildStyle = (initialStyle: ?Object, childStyle: ?Object, childKey: a
     )
   })
   return {
-    childStyle,
+    ...childStyle,
     ...initialStyle,
   }
 }
