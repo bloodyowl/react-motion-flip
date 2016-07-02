@@ -1,6 +1,7 @@
 jest
   .disableAutomock()
   .useRealTimers()
+  .mock("../warn")
 
 const React = require("react")
 const ReactFlipMotion = require("..").default
@@ -60,6 +61,58 @@ describe("ReactFlipMotion", () => {
     const reactMotion = TestUtils.findRenderedComponentWithType(flipMotion, TransitionMotion)
     const elements = TestUtils.scryRenderedComponentsWithType(reactMotion, View)
     expect(elements.length).toBe(2)
+
+  })
+
+
+  it("should warn when having colliding style keys", () => {
+
+    const warning = require("../warn").warning
+
+    class View extends React.Component {
+      render() {
+        return (
+          <div {...this.props} />
+        )
+      }
+    }
+
+    class TestComponent extends React.Component {
+      constructor(props) {
+        super(props)
+        this.state = {
+          list: [
+            { id: "0", text: "foo" },
+            { id: "1", text: "bar" },
+          ]
+        }
+      }
+      render() {
+        return (
+          <ReactFlipMotion
+            childStyle={{ opacity: 1 }}
+          >
+            {this.state.list.map((item) =>
+              <View style={{ height: 10, fontSize: 10 }} key={item.id}>
+                {item.text}
+              </View>
+            )}
+          </ReactFlipMotion>
+        )
+      }
+    }
+
+    const testComponent = TestUtils.renderIntoDocument(
+      <TestComponent />
+    )
+
+    expect(warning.mock.calls.length).toBe(6)
+    expect(warning.mock.calls[0][0]).toBe(false)
+    expect(warning.mock.calls[1][0]).toBe(true)
+    expect(warning.mock.calls[2][0]).toBe(true)
+    expect(warning.mock.calls[3][0]).toBe(false)
+    expect(warning.mock.calls[4][0]).toBe(true)
+    expect(warning.mock.calls[5][0]).toBe(true)
 
   })
 

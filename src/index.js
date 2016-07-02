@@ -5,6 +5,8 @@ import { TransitionMotion, spring } from "react-motion"
 
 import type { Element as ReactElement } from "react"
 
+import { warning } from "./warn"
+
 class FlipMotion extends Component<void, Props, State> {
   state: State;
   children: { [key: any]: HTMLElement };
@@ -115,12 +117,17 @@ class FlipMotion extends Component<void, Props, State> {
             {styles.map((item) =>
               <ChildComponent
                 key={item.key}
-                style={item.style && {
-                  ...childStyle,
-                  opacity: item.style.opacity,
-                  transform: `translate(${ item.style.x }px, ${ item.style.y }px) scale(${ item.style.scale })`,
-                  WebkitTransform: `translate(${ item.style.x }px, ${ item.style.y }px) scale(${ item.style.scale })`,
-                }}
+                style={
+                  mergeChildStyle(
+                    item.style && {
+                      opacity: item.style.opacity,
+                      transform: `translate(${ item.style.x }px, ${ item.style.y }px) scale(${ item.style.scale })`,
+                      WebkitTransform: `translate(${ item.style.x }px, ${ item.style.y }px) scale(${ item.style.scale })`,
+                    },
+                    childStyle,
+                    item.key
+                  )
+                }
                 ref={(c) => this.children[item.key] = c}
               >
                 {item.data}
@@ -158,6 +165,27 @@ type Props = {
   component?: string | ReactClass,
   childComponent?: string | ReactClass,
   className?: string,
+}
+
+const mergeChildStyle = (initialStyle: ?Object, childStyle: ?Object, childKey: any): Object => {
+  // quick paths, no validation to perform
+  if(!childStyle) {
+    return initialStyle
+  }
+  if(!initialStyle) {
+    return childStyle
+  }
+  const initialStyleKeys = Object.keys(initialStyle)
+  initialStyleKeys.forEach((key) => {
+    warning(
+      !childStyle.hasOwnProperty(key),
+      `ReactMotionFlip, colliding \`childStyle\` for \`${ key }\` property at key \`${ childKey }\``
+    )
+  })
+  return {
+    childStyle,
+    ...initialStyle,
+  }
 }
 
 export default FlipMotion
