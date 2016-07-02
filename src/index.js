@@ -98,16 +98,22 @@ class FlipMotion extends Component<void, Props, State> {
     }
   }
   render() {
-    const { style, childStyle } = this.props
+    const style = this.props.style
+    const childStyle = this.props.childStyle
+    const Component = this.props.component || "div"
+    const ChildComponent = this.props.childComponent || "div"
     return (
       <TransitionMotion
         styles={this.getStyles()}
         willEnter={this.willEnter}
       >
         {(styles) =>
-          <div style={style}>
+          <Component
+            style={style}
+            className={this.props.className}
+          >
             {styles.map((item) =>
-              <div
+              <ChildComponent
                 key={item.key}
                 style={item.style && {
                   ...childStyle,
@@ -118,9 +124,9 @@ class FlipMotion extends Component<void, Props, State> {
                 ref={(c) => this.children[item.key] = c}
               >
                 {item.data}
-              </div>
+              </ChildComponent>
             )}
-          </div>
+          </Component>
         }
       </TransitionMotion>
     )
@@ -149,6 +155,9 @@ type Props = {
   children?: any,
   style?: Object,
   childStyle?: Object,
+  component?: string | ReactClass,
+  childComponent?: string | ReactClass,
+  className?: string,
 }
 
 export default FlipMotion

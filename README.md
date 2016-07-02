@@ -29,8 +29,11 @@ The only thing you need to do is passing children. These children **must** have 
 
 #### props
 
-- `style` *(optional)*: `Object` the container element style
-- `childStyle` *(optional)*: `Object` the element wrapping each child style
+- `component` *(optional)*: `String | ReactClass` the container element or component (default: `div`)
+- `style` *(optional)*: `Object` style of the container element
+- `className` *(optional)*: `String` class applied to container element
+- `childComponent` *(optional)*: `String | ReactClass` the element or component wrapping each child (default: `div`)
+- `childStyle` *(optional)*: `Object` style of the element wrapping each child
 - `springConfig` *(optional)* `Object` spring configuration for react-motion ([docs](https://github.com/chenglou/react-motion#--spring-val-number-config-springhelperconfig--opaqueconfig))
 
 #### example
@@ -52,6 +55,15 @@ The only thing you need to do is passing children. These children **must** have 
 <ReactMotionFlip
   style={{ display: "flex" }}
   childStyle={{ flexBasis: 400 }}
+>
+  {children}
+</ReactMotionFlip>
+
+// elements and classes specified
+<ReactMotionFlip
+  element="ul"
+  childElement="li"
+  className="container"
 >
   {children}
 </ReactMotionFlip>
