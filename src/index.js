@@ -179,7 +179,7 @@ const mergeChildStyle = (initialStyle: ?Object, childStyle: ?Object, childKey: a
   initialStyleKeys.forEach((key) => {
     warning(
       !childStyle.hasOwnProperty(key),
-      `ReactMotionFlip, colliding \`childStyle\` for \`${ key }\` property at key \`${ childKey }\``
+      `ReactMotionFlip, colliding \`childStyle\` for \`${ key }\` property at key \`${ childKey }\`, the one from \`childStyle\` will be ignored`
     )
   })
   return {
