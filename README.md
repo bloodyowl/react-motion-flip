@@ -16,14 +16,14 @@ $ npm install --save react-flip-motion
 
 ```javascript
 // in ES5/commonJS
-var ReactMotionFlip = require("react-flip-motion").default
+var FlipMotion = require("react-flip-motion").default
 // in ES6
-import ReactMotionFlip from "react-flip-motion"
+import FlipMotion from "react-flip-motion"
 ```
 
 ## API
 
-### ReactMotionFlip
+### FlipMotion
 
 A component that performs transitions between children states.
 
@@ -40,9 +40,10 @@ The only thing you need to do is passing children. These children **must** have 
 
 #### example
 
+Simple usage:
+
 ```javascript
-// simple usage
-<ReactMotionFlip>
+<FlipMotion>
   {list.map((item) =>
     <div
       key={item.id}
@@ -51,24 +52,30 @@ The only thing you need to do is passing children. These children **must** have 
       {item.text}
     </div>
   })}
-</ReactMotionFlip>
+</FlipMotion>
+```
 
-// with custom styles on wrappers
-<ReactMotionFlip
+With custom styles on wrappers:
+
+```javascript
+<FlipMotion
   style={{ display: "flex" }}
   childStyle={{ flexBasis: 400 }}
 >
   {children}
-</ReactMotionFlip>
+</FlipMotion>
+```
 
-// elements and classes specified
-<ReactMotionFlip
+Elements and classes specified:
+
+```javascript
+<FlipMotion
   component="ul"
   childComponent="li"
   className="container"
 >
   {children}
-</ReactMotionFlip>
+</FlipMotion>
 ```
 
 ## What is FLIP?
