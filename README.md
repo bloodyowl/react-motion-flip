@@ -1,22 +1,24 @@
-# react-motion-flip
+# react-flip-motion
 
 > A simple component to naively perform transitions between children changes
+
+> This is a fork of [react-motion-flip](https://github.com/bloodyowl/react-motion-flip), which appears to be abandoned
 
 ![](http://f.cl.ly/items/3S1p2m0W3g1W2A141505/Screen%20Recording%202016-05-31%20at%2012.09%20PM.gif)
 
 ## Install
 
 ```console
-$ npm install --save react-motion-flip
+$ npm install --save react-flip-motion
 ```
 
 ## Import
 
 ```javascript
 // in ES5/commonJS
-var ReactMotionFlip = require("react-motion-flip").default
+var ReactMotionFlip = require("react-flip-motion").default
 // in ES6
-import ReactMotionFlip from "react-motion-flip"
+import ReactMotionFlip from "react-flip-motion"
 ```
 
 ## API
@@ -61,8 +63,8 @@ The only thing you need to do is passing children. These children **must** have 
 
 // elements and classes specified
 <ReactMotionFlip
-  element="ul"
-  childElement="li"
+  component="ul"
+  childComponent="li"
   className="container"
 >
   {children}

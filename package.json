@@ -1,13 +1,10 @@
 {
-  "name": "react-motion-flip",
-  "version": "1.0.2",
-  "description": "A simple component to perform FLIP animations using react-motion",
+  "name": "react-flip-motion",
+  "version": "1.0.3",
+  "description":
+    "A simple component to perform FLIP animations using react-motion",
   "main": "lib/index.js",
-  "files": [
-    "lib",
-    "LICENSE",
-    "README.md"
-  ],
+  "files": ["lib", "LICENSE", "README.md"],
   "scripts": {
     "start": "rm -fr lib/ && babel src --out-dir lib --ignore='__tests__'",
     "examples": "node scripts/examples.js",
@@ -16,20 +13,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/bloodyowl/react-motion-flip.git"
+    "url": "git+ssh://git@github.com/asbjornh/react-flip-motion.git"
   },
-  "keywords": [
-    "react",
-    "react-motion",
-    "animation",
-    "flip"
+  "keywords": ["react", "react-motion", "animation", "flip"],
+  "contributors": [
+    {
+      "name": "Asbjorn Hegdahl",
+      "url": "https://github.com/asbjornh/"
+    }
   ],
   "author": "bloodyowl <mlbli@me.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bloodyowl/react-motion-flip/issues"
+    "url": "https://github.com/asbjornh/react-flip-motion/issues"
   },
-  "homepage": "https://github.com/bloodyowl/react-motion-flip#readme",
+  "homepage": "https://github.com/bloodyowl/react-flip-motion#readme",
   "devDependencies": {
     "babel-cli": "^6.9.0",
     "babel-core": "^6.9.1",
@@ -61,14 +59,8 @@
   "jest": {
     "rootDir": "",
     "persistModuleRegistryBetweenSpecs": true,
-    "modulePathIgnorePatterns": [
-      "<rootDir>/node_modules/"
-    ],
-    "preprocessorIgnorePatterns": [
-      "<rootDir>/node_modules/"
-    ],
-    "unmockedModulePathPatterns": [
-      "<rootDir>/node_modules/"
-    ]
+    "modulePathIgnorePatterns": ["<rootDir>/node_modules/"],
+    "preprocessorIgnorePatterns": ["<rootDir>/node_modules/"],
+    "unmockedModulePathPatterns": ["<rootDir>/node_modules/"]
   }
 }
