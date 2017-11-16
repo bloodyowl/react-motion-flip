@@ -18,22 +18,29 @@ class FlipMotion extends Component<void, Props, State> {
     this.children = {};
   }
   getStyles(): { data: ReactElement, style: { [key: any]: any }, key: any } {
-    const { children } = this.props;
-    console.log(Children.toArray(children));
-    console.log(Object.assign({}, this.state));
+    // If some elements are unmounting, use previousChildren because unmounting elements are no longer present in this.props.children
+    const { unmountingElements } = this.state;
+    const children =
+      unmountingElements && Object.keys(unmountingElements).length
+        ? this.state.previousChildren
+        : this.props.children;
+    console.log(unmountingElements, children);
+
     return Children.map(children, (child, index) => {
-      // this.state.transform && console.log(this.state.transform[child.key]);
       return {
         data: child,
-        style: {
-          x: spring(0),
-          y: spring(0),
-          ...(this.state.transform && this.state.transform[child.key]
-            ? this.state.transform[child.key]
-            : null),
-          opacity: spring(1),
-          scale: spring(1)
-        },
+        style:
+          unmountingElements && unmountingElements[child.key]
+            ? this.willLeave()
+            : {
+                x: spring(0),
+                y: spring(0),
+                ...(this.state.transform && this.state.transform[child.key]
+                  ? this.state.transform[child.key]
+                  : null),
+                opacity: spring(1),
+                scale: spring(1)
+              },
         key: child.key
       };
     });
@@ -48,25 +55,29 @@ class FlipMotion extends Component<void, Props, State> {
       ) ||
       prevChildren.length !== nextChildren.length
     ) {
-      console.log("measure", prevChildren, nextChildren);
-      const elementsThatWillUnmount = prevChildren.reduce((acc, prev) => {
-        if (nextChildren.every(next => prev.key !== next.key)) {
-          const key = prev.key.replace(".$", "");
-          const rect = this.children[key].getBoundingClientRect();
-          // acc[key] = true;
+      const elementsThatWillUnmount = {};
+      const nextKeys = Children.map(nextProps.children, child => child.key);
+      Children.forEach(this.props.children, prev => {
+        // If key is missing in nextKeys, element is about to unmount. Store dimensions and set position absolute
+        if (nextKeys.indexOf(prev.key) === -1) {
+          const rect = this.children[prev.key].getBoundingClientRect();
 
-          acc[key] = {
-            height: rect.height,
-            width: rect.width,
-            left: rect.left,
-            top: rect.top
+          elementsThatWillUnmount[prev.key] = {
+            styles: {
+              height: rect.height,
+              width: rect.width,
+              left: rect.left,
+              top: rect.top,
+              position: "absolute"
+            }
           };
         }
-        return acc;
-      }, {});
+      });
       this.setState({
         elementsThatWillUnmount,
+        unmountingElements: null,
         shouldMesure: true,
+        previousChildren: this.props.children,
         previousPosition: Object.keys(this.children).reduce((acc, key) => {
           if (this.children[key]) {
             acc[key] = this.children[key].getBoundingClientRect();
@@ -83,7 +94,7 @@ class FlipMotion extends Component<void, Props, State> {
         this.setState(
           state => {
             return {
-              elementsThatWillUnmount: {},
+              elementsThatWillUnmount: null,
               unmountingElements: state.elementsThatWillUnmount,
               shouldMesure: false,
               transform: Object.keys(this.children).reduce((acc, key) => {
@@ -165,21 +176,21 @@ class FlipMotion extends Component<void, Props, State> {
               const willUnmount =
                 this.state.shouldMesure && elementsThatWillUnmount[item.key];
               const isUnMounting = unmountingElements[item.key];
+              const unMountingStyles =
+                isUnMounting && unmountingElements[item.key].styles;
 
-              return (
+              return willUnmount ? null : (
                 <ChildComponent
                   key={item.key}
                   style={
                     item.style && {
                       ...childStyle,
+                      ...unMountingStyles,
                       opacity: item.style.opacity,
                       transform: `translate(${item.style.x}px, ${item.style
                         .y}px) scale(${item.style.scale})`,
                       WebkitTransform: `translate(${item.style.x}px, ${item
-                        .style.y}px) scale(${item.style.scale})`,
-                      display: willUnmount ? "none" : childStyle.display,
-                      position: isUnMounting ? "absolute" : null,
-                      ...isUnMounting
+                        .style.y}px) scale(${item.style.scale})`
                     }
                   }
                   ref={c => (this.children[item.key] = c)}
