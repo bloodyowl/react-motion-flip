@@ -1,10 +1,13 @@
 {
   "name": "react-flip-motion",
   "version": "1.0.4",
-  "description":
-    "A simple component to perform FLIP animations using react-motion",
+  "description": "A simple component to perform FLIP animations using react-motion",
   "main": "lib/index.js",
-  "files": ["lib", "LICENSE", "README.md"],
+  "files": [
+    "lib",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "start": "rm -fr lib/ && babel src --out-dir lib --ignore='__tests__'",
     "examples": "node scripts/examples.js",
@@ -15,7 +18,12 @@
     "type": "git",
     "url": "git+ssh://git@github.com/asbjornh/react-flip-motion.git"
   },
-  "keywords": ["react", "react-motion", "animation", "flip"],
+  "keywords": [
+    "react",
+    "react-motion",
+    "animation",
+    "flip"
+  ],
   "contributors": [
     {
       "name": "Asbjorn Hegdahl",
@@ -51,7 +59,7 @@
   },
   "dependencies": {
     "raf": "^3.2.0",
-    "react-motion": "^0.4.3"
+    "react-motion": "^0.5.2"
   },
   "peerDependencies": {
     "react": "^15.1.0"
@@ -59,8 +67,14 @@
   "jest": {
     "rootDir": "",
     "persistModuleRegistryBetweenSpecs": true,
-    "modulePathIgnorePatterns": ["<rootDir>/node_modules/"],
-    "preprocessorIgnorePatterns": ["<rootDir>/node_modules/"],
-    "unmockedModulePathPatterns": ["<rootDir>/node_modules/"]
+    "modulePathIgnorePatterns": [
+      "<rootDir>/node_modules/"
+    ],
+    "preprocessorIgnorePatterns": [
+      "<rootDir>/node_modules/"
+    ],
+    "unmockedModulePathPatterns": [
+      "<rootDir>/node_modules/"
+    ]
   }
 }

@@ -18,13 +18,15 @@ class FlipMotion extends Component<void, Props, State> {
     this.children = {};
   }
   getStyles(): { data: ReactElement, style: { [key: any]: any }, key: any } {
-    // If some elements are unmounting, use previousChildren because unmounting elements are no longer present in this.props.children
     const { unmountingElements } = this.state;
+
+    // If some elements are unmounting, use previousChildren instead because unmounting elements are no longer present in this.props.children
     const children =
       unmountingElements && Object.keys(unmountingElements).length
         ? this.state.previousChildren
         : this.props.children;
-    console.log(unmountingElements, children);
+    // console.log(unmountingElements, children);
+    // console.log(this.children);
 
     return Children.map(children, (child, index) => {
       return {
@@ -57,6 +59,7 @@ class FlipMotion extends Component<void, Props, State> {
     ) {
       const elementsThatWillUnmount = {};
       const nextKeys = Children.map(nextProps.children, child => child.key);
+
       Children.forEach(this.props.children, prev => {
         // If key is missing in nextKeys, element is about to unmount. Store dimensions and set position absolute
         if (nextKeys.indexOf(prev.key) === -1) {
@@ -73,11 +76,25 @@ class FlipMotion extends Component<void, Props, State> {
           };
         }
       });
-      this.setState({
+
+      // Filter out elements that have completed their transition out
+      const filteredUnmountingElements = {};
+      Object.keys(this.state.unmountingElements || {}).forEach(key => {
+        const childEl = this.children[key];
+        if (childEl && childEl.style.opacity !== 0) {
+          console.log("yas");
+          filteredUnmountingElements[key] = this.state.unmountingElements[key];
+        }
+      });
+      console.log("filtered", filteredUnmountingElements);
+
+      this.setState(state => ({
         elementsThatWillUnmount,
-        unmountingElements: null,
+        unmountingElements: filteredUnmountingElements,
         shouldMesure: true,
-        previousChildren: this.props.children,
+        previousChildren: Object.keys(filteredUnmountingElements).length
+          ? state.previousChildren
+          : this.props.children,
         previousPosition: Object.keys(this.children).reduce((acc, key) => {
           if (this.children[key]) {
             acc[key] = this.children[key].getBoundingClientRect();
@@ -85,7 +102,7 @@ class FlipMotion extends Component<void, Props, State> {
           return acc;
         }, {}),
         transform: null
-      });
+      }));
     }
   }
   componentDidUpdate() {
@@ -93,9 +110,14 @@ class FlipMotion extends Component<void, Props, State> {
       raf(() => {
         this.setState(
           state => {
+            console.log("unmounting", state.unmountingElements);
             return {
               elementsThatWillUnmount: null,
-              unmountingElements: state.elementsThatWillUnmount,
+              unmountingElements: Object.assign(
+                {},
+                state.elementsThatWillUnmount,
+                state.unmountingElements
+              ),
               shouldMesure: false,
               transform: Object.keys(this.children).reduce((acc, key) => {
                 if (!this.children[key]) {
@@ -106,13 +128,10 @@ class FlipMotion extends Component<void, Props, State> {
                   return acc;
                 }
                 const nextRect = this.children[key].getBoundingClientRect();
-                if (
-                  this.state.previousPosition &&
-                  this.state.previousPosition[key]
-                ) {
+                if (state.previousPosition && state.previousPosition[key]) {
                   acc[key] = {
-                    x: this.state.previousPosition[key].left - nextRect.left,
-                    y: this.state.previousPosition[key].top - nextRect.top
+                    x: state.previousPosition[key].left - nextRect.left,
+                    y: state.previousPosition[key].top - nextRect.top
                   };
                 }
                 return acc;
@@ -122,17 +141,15 @@ class FlipMotion extends Component<void, Props, State> {
           },
           () => {
             if (this.state.transform) {
-              this.setState({
-                transform: Object.keys(
-                  this.state.transform
-                ).reduce((acc, key) => {
+              this.setState(state => ({
+                transform: Object.keys(state.transform).reduce((acc, key) => {
                   acc[key] = {
                     x: spring(0, this.props.springConfig),
                     y: spring(0, this.props.springConfig)
                   };
                   return acc;
                 }, {})
-              });
+              }));
               this.children = {};
             }
           }
@@ -169,28 +186,34 @@ class FlipMotion extends Component<void, Props, State> {
         styles={this.getStyles()}
         willEnter={this.willEnter}
         willLeave={this.willLeave}
+        onRest={() => console.log("rest")}
       >
         {styles => (
           <Component style={style} className={this.props.className}>
             {styles.map(item => {
               const willUnmount =
-                this.state.shouldMesure && elementsThatWillUnmount[item.key];
+                this.state.shouldMesure &&
+                (elementsThatWillUnmount[item.key] ||
+                  unmountingElements[item.key]);
               const isUnMounting = unmountingElements[item.key];
               const unMountingStyles =
                 isUnMounting && unmountingElements[item.key].styles;
 
-              return willUnmount ? null : (
+              return (
                 <ChildComponent
                   key={item.key}
                   style={
                     item.style && {
                       ...childStyle,
                       ...unMountingStyles,
+                      display: willUnmount ? "none" : childStyle.display,
                       opacity: item.style.opacity,
-                      transform: `translate(${item.style.x}px, ${item.style
-                        .y}px) scale(${item.style.scale})`,
-                      WebkitTransform: `translate(${item.style.x}px, ${item
-                        .style.y}px) scale(${item.style.scale})`
+                      transform: `translate(${item.style.x}px, ${
+                        item.style.y
+                      }px) scale(${item.style.scale})`,
+                      WebkitTransform: `translate(${item.style.x}px, ${
+                        item.style.y
+                      }px) scale(${item.style.scale})`
                     }
                   }
                   ref={c => (this.children[item.key] = c)}
