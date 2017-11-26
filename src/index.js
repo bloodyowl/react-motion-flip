@@ -17,23 +17,30 @@ class FlipMotion extends Component<void, Props, State> {
     };
     this.children = {};
   }
+  static defaultProps = {
+    childStyle: {}
+  };
   getStyles(): { data: ReactElement, style: { [key: any]: any }, key: any } {
-    const { unmountingElements } = this.state;
+    const { elementsThatWillUnmount, unmountingElements } = this.state;
 
-    // If some elements are unmounting, use previousChildren instead because unmounting elements are no longer present in this.props.children
+    // If some elements are unmounting, use previousChildren to be able to add out transition to leaving elements
     const children =
-      unmountingElements && Object.keys(unmountingElements).length
+      (unmountingElements && Object.keys(unmountingElements).length) ||
+      (elementsThatWillUnmount && Object.keys(elementsThatWillUnmount).length)
         ? this.state.previousChildren
         : this.props.children;
-    // console.log(unmountingElements, children);
-    // console.log(this.children);
 
     return Children.map(children, (child, index) => {
       return {
         data: child,
         style:
           unmountingElements && unmountingElements[child.key]
-            ? this.willLeave()
+            ? {
+                x: spring(0),
+                y: spring(0),
+                opacity: spring(0),
+                scale: spring(0.6)
+              }
             : {
                 x: spring(0),
                 y: spring(0),
@@ -46,6 +53,23 @@ class FlipMotion extends Component<void, Props, State> {
         key: child.key
       };
     });
+  }
+  pruneUnmountingElements() {
+    // Remove elements that have completed their out transition
+    const prunedUnmountingElements = {};
+
+    Object.keys(this.state.unmountingElements || {}).forEach(key => {
+      const childEl = this.children[key];
+      if (childEl && parseFloat(childEl.style.opacity) !== 0) {
+        prunedUnmountingElements[key] = this.state.unmountingElements[key];
+      }
+    });
+
+    if (!Object.keys(prunedUnmountingElements).length) {
+      clearInterval(this.pruneLoop);
+    }
+
+    this.setState({ unmountingElements: prunedUnmountingElements });
   }
   componentWillReceiveProps(nextProps: Props) {
     const prevChildren = Children.toArray(this.props.children);
@@ -60,12 +84,15 @@ class FlipMotion extends Component<void, Props, State> {
       const elementsThatWillUnmount = {};
       const nextKeys = Children.map(nextProps.children, child => child.key);
 
-      Children.forEach(this.props.children, prev => {
-        // If key is missing in nextKeys, element is about to unmount. Store dimensions and set position absolute
-        if (nextKeys.indexOf(prev.key) === -1) {
-          const rect = this.children[prev.key].getBoundingClientRect();
+      Children.forEach(this.props.children, prevChild => {
+        // If key is missing in nextKeys and , element is about to unmount. Store dimensions to be able to position absolutely
+        if (
+          nextKeys.indexOf(prevChild.key) === -1 &&
+          nextChildren.length < prevChildren.length
+        ) {
+          const rect = this.children[prevChild.key].getBoundingClientRect();
 
-          elementsThatWillUnmount[prev.key] = {
+          elementsThatWillUnmount[prevChild.key] = {
             styles: {
               height: rect.height,
               width: rect.width,
@@ -77,24 +104,18 @@ class FlipMotion extends Component<void, Props, State> {
         }
       });
 
-      // Filter out elements that have completed their transition out
-      const filteredUnmountingElements = {};
-      Object.keys(this.state.unmountingElements || {}).forEach(key => {
-        const childEl = this.children[key];
-        if (childEl && childEl.style.opacity !== 0) {
-          console.log("yas");
-          filteredUnmountingElements[key] = this.state.unmountingElements[key];
-        }
-      });
-      console.log("filtered", filteredUnmountingElements);
+      // As TransitionMotion does not provide a callback on motion end, we need to manually remove the elements that have completed their out transition and are ready to be unmounted
+      clearInterval(this.pruneLoop);
+      this.pruneLoop = setInterval(
+        this.pruneUnmountingElements.bind(this),
+        100
+      );
 
       this.setState(state => ({
         elementsThatWillUnmount,
-        unmountingElements: filteredUnmountingElements,
+        unmountingElements: {},
         shouldMesure: true,
-        previousChildren: Object.keys(filteredUnmountingElements).length
-          ? state.previousChildren
-          : this.props.children,
+        previousChildren: this.props.children,
         previousPosition: Object.keys(this.children).reduce((acc, key) => {
           if (this.children[key]) {
             acc[key] = this.children[key].getBoundingClientRect();
@@ -110,14 +131,9 @@ class FlipMotion extends Component<void, Props, State> {
       raf(() => {
         this.setState(
           state => {
-            console.log("unmounting", state.unmountingElements);
             return {
               elementsThatWillUnmount: null,
-              unmountingElements: Object.assign(
-                {},
-                state.elementsThatWillUnmount,
-                state.unmountingElements
-              ),
+              unmountingElements: state.elementsThatWillUnmount,
               shouldMesure: false,
               transform: Object.keys(this.children).reduce((acc, key) => {
                 if (!this.children[key]) {
@@ -165,14 +181,6 @@ class FlipMotion extends Component<void, Props, State> {
       opacity: 0
     };
   }
-  willLeave() {
-    return {
-      x: spring(0),
-      y: spring(0),
-      scale: spring(0.8),
-      opacity: spring(0)
-    };
-  }
   render() {
     const style = this.props.style;
     const childStyle = this.props.childStyle;
@@ -182,12 +190,7 @@ class FlipMotion extends Component<void, Props, State> {
     const unmountingElements = this.state.unmountingElements || {};
 
     return (
-      <TransitionMotion
-        styles={this.getStyles()}
-        willEnter={this.willEnter}
-        willLeave={this.willLeave}
-        onRest={() => console.log("rest")}
-      >
+      <TransitionMotion styles={this.getStyles()} willEnter={this.willEnter}>
         {styles => (
           <Component style={style} className={this.props.className}>
             {styles.map(item => {
