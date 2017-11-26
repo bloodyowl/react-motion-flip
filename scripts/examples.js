@@ -1,39 +1,39 @@
-var webpack = require("webpack")
-var WebpackDevServer = require("webpack-dev-server")
-var path = require("path")
+var webpack = require("webpack");
+var WebpackDevServer = require("webpack-dev-server");
+var path = require("path");
 
 var location = {
   protocol: "http://",
-  host: "0.0.0.0",
-  port: 3005,
-  open: true,
-}
+  host: "localhost",
+  port: 8080,
+  open: true
+};
 
-var serverUrl = `${ location.protocol }${ location.host }:${ location.port }`
+var serverUrl = `${location.protocol}${location.host}:${location.port}`;
 
 var config = {
   entry: {
-    "examples/list/index": "./examples/list/index.js",
+    "examples/list/index": "./examples/list/index.js"
   },
   output: {
     path: path.join(__dirname, "../../dist"),
     filename: "[name].js",
-    publicPath: "/",
+    publicPath: "/"
   },
   module: {
     loaders: [
       {
         test: /\.js$/,
         loader: "babel",
-        exclude: /node_modules/,
+        exclude: /node_modules/
       },
       {
         test: /\.html$/,
-        loader: "file?name=[path][name].html",
-      },
-    ],
+        loader: "file?name=[path][name].html"
+      }
+    ]
   }
-}
+};
 
 var server = new WebpackDevServer(webpack(config), {
   contentBase: config.output.path,
@@ -41,19 +41,14 @@ var server = new WebpackDevServer(webpack(config), {
   stats: {
     colors: true,
     chunkModules: false,
-    assets: true,
+    assets: true
   },
   noInfo: true,
-  historyApiFallback: true,
-})
+  historyApiFallback: true
+});
 
-server.listen(
-  location.port,
-  location.host,
-  function() {
-    console.log(`open ${ serverUrl }/examples in your browser`)
-  }
-)
+server.listen(location.port, location.host, function() {
+  console.log(`open ${serverUrl}/examples in your browser`);
+});
 
-
-module.exports = config
+module.exports = config;
