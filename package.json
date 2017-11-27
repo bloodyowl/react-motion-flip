@@ -1,38 +1,37 @@
 {
-  "name": "react-motion-flip",
-  "version": "1.0.2",
-  "description": "A simple component to perform FLIP animations using react-motion",
+  "name": "react-flip-motion",
+  "version": "1.0.5",
+  "description":
+    "A simple component to perform FLIP animations using react-motion",
   "main": "lib/index.js",
-  "files": [
-    "lib",
-    "LICENSE",
-    "README.md"
-  ],
+  "files": ["lib", "LICENSE", "README.md"],
   "scripts": {
     "start": "rm -fr lib/ && babel src --out-dir lib --ignore='__tests__'",
-    "examples": "node scripts/examples.js",
     "test": "jest --verbose",
-    "pub": "npm test && npm start && npm publish"
+    "pub": "npm test && npm start && npm publish",
+    "dev": "webpack-dev-server --content-base dist/ --inline"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/bloodyowl/react-motion-flip.git"
+    "url": "git+ssh://git@github.com/asbjornh/react-flip-motion.git"
   },
-  "keywords": [
-    "react",
-    "react-motion",
-    "animation",
-    "flip"
+  "keywords": ["react", "react-motion", "animation", "flip"],
+  "contributors": [
+    {
+      "name": "Asbjorn Hegdahl",
+      "url": "https://github.com/asbjornh/"
+    }
   ],
   "author": "bloodyowl <mlbli@me.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bloodyowl/react-motion-flip/issues"
+    "url": "https://github.com/asbjornh/react-flip-motion/issues"
   },
-  "homepage": "https://github.com/bloodyowl/react-motion-flip#readme",
+  "homepage": "https://github.com/bloodyowl/react-flip-motion#readme",
   "devDependencies": {
     "babel-cli": "^6.9.0",
     "babel-core": "^6.9.1",
+    "babel-eslint": "^8.0.2",
     "babel-jest": "^12.1.0",
     "babel-loader": "^6.2.4",
     "babel-plugin-syntax-flow": "^6.8.0",
@@ -41,19 +40,25 @@
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.5.0",
+    "eslint": "^4.12.0",
+    "eslint-loader": "^1.9.0",
+    "eslint-plugin-react": "^7.5.1",
+    "expose-loader": "^0.7.4",
     "file-loader": "^0.8.5",
     "flow-bin": "^0.25.0",
+    "html-webpack-plugin": "^2.30.1",
     "jest-cli": "^12.1.1",
     "object-assign": "^4.1.0",
+    "prop-types": "^15.6.0",
     "react": "^15.1.0",
     "react-addons-test-utils": "^15.1.0",
     "react-dom": "^15.1.0",
-    "webpack": "^1.13.1",
-    "webpack-dev-server": "^1.14.1"
+    "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.9.4"
   },
   "dependencies": {
     "raf": "^3.2.0",
-    "react-motion": "^0.4.3"
+    "react-motion": "^0.5.2"
   },
   "peerDependencies": {
     "react": "^15.1.0"
@@ -61,14 +66,8 @@
   "jest": {
     "rootDir": "",
     "persistModuleRegistryBetweenSpecs": true,
-    "modulePathIgnorePatterns": [
-      "<rootDir>/node_modules/"
-    ],
-    "preprocessorIgnorePatterns": [
-      "<rootDir>/node_modules/"
-    ],
-    "unmockedModulePathPatterns": [
-      "<rootDir>/node_modules/"
-    ]
+    "modulePathIgnorePatterns": ["<rootDir>/node_modules/"],
+    "preprocessorIgnorePatterns": ["<rootDir>/node_modules/"],
+    "unmockedModulePathPatterns": ["<rootDir>/node_modules/"]
   }
 }

@@ -1,27 +1,35 @@
-# react-motion-flip
+# react-flip-motion
 
 > A simple component to naively perform transitions between children changes
 
-![](http://f.cl.ly/items/3S1p2m0W3g1W2A141505/Screen%20Recording%202016-05-31%20at%2012.09%20PM.gif)
+> This is a fork of [react-motion-flip](https://github.com/bloodyowl/react-motion-flip), which appears to be abandoned
+
+![flipmotion-loop](https://user-images.githubusercontent.com/13281350/33279420-c25b0856-d39e-11e7-9406-0930aa204655.gif)
 
 ## Install
 
 ```console
-$ npm install --save react-motion-flip
+npm install --save react-flip-motion
+```
+
+or
+
+```console
+yarn add react-flip-motion
 ```
 
 ## Import
 
 ```javascript
 // in ES5/commonJS
-var ReactMotionFlip = require("react-motion-flip").default
+var FlipMotion = require("react-flip-motion").default
 // in ES6
-import ReactMotionFlip from "react-motion-flip"
+import FlipMotion from "react-flip-motion"
 ```
 
 ## API
 
-### ReactMotionFlip
+### FlipMotion
 
 A component that performs transitions between children states.
 
@@ -38,9 +46,10 @@ The only thing you need to do is passing children. These children **must** have 
 
 #### example
 
+Simple usage:
+
 ```javascript
-// simple usage
-<ReactMotionFlip>
+<FlipMotion>
   {list.map((item) =>
     <div
       key={item.id}
@@ -49,24 +58,30 @@ The only thing you need to do is passing children. These children **must** have 
       {item.text}
     </div>
   })}
-</ReactMotionFlip>
+</FlipMotion>
+```
 
-// with custom styles on wrappers
-<ReactMotionFlip
+With custom styles on wrappers:
+
+```javascript
+<FlipMotion
   style={{ display: "flex" }}
   childStyle={{ flexBasis: 400 }}
 >
   {children}
-</ReactMotionFlip>
+</FlipMotion>
+```
 
-// elements and classes specified
-<ReactMotionFlip
-  element="ul"
-  childElement="li"
+Elements and classes specified:
+
+```javascript
+<FlipMotion
+  component="ul"
+  childComponent="li"
   className="container"
 >
   {children}
-</ReactMotionFlip>
+</FlipMotion>
 ```
 
 ## What is FLIP?
