@@ -4,22 +4,17 @@ import ReactDOM from "react-dom";
 
 import FlipMotion from "../src";
 
-const fakeContent = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-  Nunc tempor magna et bibendum dapibus.
-  Curabitur et velit auctor sapien commodo congue.
-  Aenean id orci ut augue cursus faucibus non at mi.
-  Etiam quis turpis euismod, pharetra mi eu, varius enim.
-  Fusce quis ipsum posuere, malesuada nulla nec, feugiat neque.
-  Ut at est posuere, iaculis mauris sit amet, pulvinar risus.
-  Cras scelerisque lectus vel feugiat euismod.
-  Donec ut sapien sit amet diam sodales molestie.
-  Mauris sed tellus id justo ullamcorper venenatis.
-  Vestibulum sit amet nibh tincidunt, vehicula lorem nec, auctor quam.
-  Fusce consectetur odio vel neque consectetur, ac posuere nibh imperdiet.
-  Integer at ligula vel neque vehicula tempor.
-  Suspendisse aliquet orci non sem convallis, a convallis est vehicula.`.split(
-  "\n"
-);
+function getColor(index) {
+  const colors = ["#ff5e47", "#ffcf47", "#0088ff", "#11c764"];
+  return typeof index !== "undefined"
+    ? colors[index]
+    : colors[Math.floor(Math.random() * colors.length)];
+}
+
+function getLetter() {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  return letters[Math.floor(Math.random() * letters.length)];
+}
 
 const styles = {
   item: {
@@ -27,22 +22,25 @@ const styles = {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    alignItems: "stretch"
+    alignItems: "stretch",
+    marginTop: 40
   },
   card: {
-    flexBasis: "33.3333%",
+    width: 100,
+    height: 100,
     flexGrow: 0,
     flexShrink: 0,
-    padding: 10,
-    display: "flex",
-    flexDirection: "column"
+    padding: 5
   },
   cardContent: {
-    padding: 10,
-    backgroundColor: "#fff",
-    borderRadius: 2,
-    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
-    flexGrow: 1
+    alignItems: "center",
+    borderRadius: 5,
+    color: "white",
+    display: "flex",
+    fontSize: "2em",
+    height: "100%",
+    justifyContent: "center",
+    padding: 10
   }
 };
 
@@ -51,13 +49,12 @@ class App extends Component {
     super(props);
     this.state = {
       list: [
-        { id: "0", content: "Declarative API for FLIP animations" },
-        { id: "1", content: "Pass-children as an API" },
-        { id: "2", content: "Use react-motion under the hood" }
+        { id: "0", content: "A", color: getColor(0) },
+        { id: "1", content: "B", color: getColor(1) },
+        { id: "2", content: "C", color: getColor(2) }
       ]
     };
     this.shuffle = this.shuffle.bind(this);
-    this.addItem = this.addItem.bind(this);
     this.addItemRandomly = this.addItemRandomly.bind(this);
     this.deleteItemRandomly = this.deleteItemRandomly.bind(this);
     this.replaceItemRandomly = this.replaceItemRandomly.bind(this);
@@ -70,17 +67,6 @@ class App extends Component {
       list: list.concat().sort(() => (Math.random() > 0.5 ? -1 : 1))
     }));
   }
-  addItem() {
-    this.setState(({ list }) => ({
-      list: [
-        ...list,
-        {
-          id: String(Math.random()),
-          content: fakeContent[~~(Math.random() * fakeContent.length)]
-        }
-      ]
-    }));
-  }
   addItemRandomly() {
     this.setState(({ list }) => {
       const index = ~~(Math.random() * list.length);
@@ -89,7 +75,8 @@ class App extends Component {
           ...list.slice(0, index),
           {
             id: String(Math.random()),
-            content: fakeContent[~~(Math.random() * fakeContent.length)]
+            content: getLetter(),
+            color: getColor()
           },
           ...list.slice(index)
         ]
@@ -104,7 +91,8 @@ class App extends Component {
           ...list.slice(0, index),
           {
             id: String(Math.random()),
-            content: fakeContent[~~(Math.random() * fakeContent.length)]
+            content: getLetter(),
+            color: getColor()
           },
           ...list.slice(index + 1)
         ]
@@ -113,7 +101,7 @@ class App extends Component {
   }
   deleteItemRandomly() {
     this.setState(({ list }) => {
-      const index = Math.ceil(Math.random() * list.length);
+      const index = Math.floor(Math.random() * list.length);
       if (list.length === 1) {
         return { list: [] };
       }
@@ -140,9 +128,9 @@ class App extends Component {
     const { list } = this.state;
     return (
       <div>
+        <h1>FlipMotion</h1>
         <button onClick={this.shuffle}>Shuffle the list</button>
-        <button onClick={this.addItem}>Append an item</button>
-        <button onClick={this.addItemRandomly}>Add an anywhere</button>
+        <button onClick={this.addItemRandomly}>Add an item</button>
         <button onClick={this.deleteItemRandomly}>Delete an item</button>
         <button onClick={this.deleteMultipleItemsRandomly}>
           Delete multiple items
@@ -150,7 +138,12 @@ class App extends Component {
         <button onClick={this.replaceItemRandomly}>Replace an item</button>
         <FlipMotion style={styles.item} childStyle={styles.card}>
           {list.map(item => (
-            <div key={item.id} style={styles.cardContent}>
+            <div
+              key={item.id}
+              style={Object.assign({}, styles.cardContent, {
+                backgroundColor: item.color
+              })}
+            >
               {item.content}
             </div>
           ))}

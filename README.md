@@ -4,12 +4,18 @@
 
 > This is a fork of [react-motion-flip](https://github.com/bloodyowl/react-motion-flip), which appears to be abandoned
 
-![](http://f.cl.ly/items/3S1p2m0W3g1W2A141505/Screen%20Recording%202016-05-31%20at%2012.09%20PM.gif)
+![flipmotion-loop](https://user-images.githubusercontent.com/13281350/33279420-c25b0856-d39e-11e7-9406-0930aa204655.gif)
 
 ## Install
 
 ```console
-$ npm install --save react-flip-motion
+npm install --save react-flip-motion
+```
+
+or
+
+```console
+yarn add react-flip-motion
 ```
 
 ## Import
